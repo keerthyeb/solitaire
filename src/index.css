@@ -10,7 +10,7 @@ html {
 }
 
 .upperContainer {
-  height: 25%;
+  height: 35%;
   width: 98.5%;
   display: flex;
   justify-content: space-between;
@@ -24,7 +24,7 @@ html {
   justify-content: space-between;
   flex-direction: row;
 }
-.reservedcardSection {
+.reservedSection {
   height: 90%;
   width: 60%;
   display: flex;
@@ -34,11 +34,12 @@ html {
 .back {
   height: 95%;
   width: 40%;
-  /* border: 1px solid black; */
-  font-size: 150px;
+  line-height: 0.8;
+  font-size: 180px;
+  background-color: white;
 }
 
-.reservedDeckCard {
+.reservedCard {
   height: 95%;
   width: 15%;
   border: 1px solid black;
@@ -54,8 +55,9 @@ html {
 
 .piles {
   width: 99%;
-  height: 80%;
+  height: 90%;
   display: flex;
+  margin-top: 130px;
   justify-content: space-around;
   flex-direction: row;
 }
@@ -69,16 +71,18 @@ html {
 }
 
 .black {
-  width: 55%;
-  height: 10%;
-  margin: 10px;
-  font-size: 80px;
+  width: 70%;
+  height: 35%;
+  font-size: 120px;
+  text-align: center;
+  background-color: white;
 }
 
 .red {
-  width: 55%;
-  height: 10%;
-  margin: 10px;
-  font-size: 80px;
+  width: 70%;
+  height: 35%;
+  font-size: 120px;
   color: red;
+  text-align: center;
+  background-color: white;
 }
