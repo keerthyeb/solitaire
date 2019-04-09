@@ -16,9 +16,8 @@ class Piles {
   }
 
   setDraggable = (pileNumber, pileLength) => {
-    if (this.piles[pileNumber][pileLength - 2]) {
+    if (this.piles[pileNumber][pileLength - 2])
       this.piles[pileNumber][pileLength - 2].draggable = true;
-    }
   };
 
   removeCard = pileNumber => this.piles[pileNumber].pop();
@@ -30,18 +29,16 @@ class Piles {
     let { length, pile } = this.getPileAndLength(destinationPile);
     if (length == 0 && this.isKing(card)) {
       this.updatePiles(destinationPile, sourcePile, card);
-      if (this.piles[sourcePile].length) {
-        this.piles[sourcePile][this.piles[sourcePile].length - 1].draggable = true;
-      }
       return;
     }
     let lastCard = pile[length - 1];
-    if (this.isThisDropableOnPile(lastCard, card)) {
+    if (this.isThisDropableOnPile(lastCard, card))
       this.updatePiles(destinationPile, sourcePile, card);
-      if (this.piles[sourcePile].length) {
-        this.piles[sourcePile][this.piles[sourcePile].length - 1].draggable = true;
-      }
-    }
+  }
+
+  setLastCardDraggable(sourcePile) {
+    if (this.piles[sourcePile].length)
+      this.piles[sourcePile][this.piles[sourcePile].length - 1].draggable = true;
   }
 
   isDropableFromOpenCard(card, pileNumber) {
@@ -63,8 +60,8 @@ class Piles {
   updatePiles(destinationPile, sourcePile, card) {
     let sourcePileLength = this.piles[sourcePile].length;
     let length = 0;
-    for (let i = 0; i < sourcePileLength; i++) {
-      let currentCard = this.piles[sourcePile][i];
+    for (let index = 0; index < sourcePileLength; index++) {
+      let currentCard = this.piles[sourcePile][index];
       if (currentCard.unicode == card.unicode) break;
       length++;
     }
@@ -73,6 +70,7 @@ class Piles {
       this.piles[destinationPile].push(card);
     });
     this.piles[destinationPile].concat(sourcePileArray);
+    this.setLastCardDraggable(sourcePile);
   }
 }
 

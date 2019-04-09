@@ -88,7 +88,12 @@ class Solitaire extends React.Component {
       return;
     }
     cardsDiv.push(
-      <div id={"pile_" + pile} className="pile" onDrop={this.dropOnEmptyPile} onDragOver={this.allowDrop.bind(this)} />
+      <div
+        id={"pile_" + pile}
+        className="pile"
+        onDrop={this.dropOnEmptyPile}
+        onDragOver={this.allowDrop.bind(this)}
+      />
     );
   }
 
@@ -166,7 +171,12 @@ function OpenCard(props) {
 
 function ReservedDeck(props) {
   return (
-    <div className={props.class} id={props.card} onDrop={props.onDrop} onDragOver={props.onDragOver}>
+    <div
+      className={props.class}
+      id={props.card}
+      onDrop={props.onDrop}
+      onDragOver={props.onDragOver}
+    >
       {props.text}
     </div>
   );
