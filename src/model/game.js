@@ -9,6 +9,8 @@ class Game {
     this.winningPiles = new WinningPiles();
     this.piles = new Piles();
     this.openCards = [];
+    this.rendPileCards();
+    this.initializeOpenCards();
   }
 
   rendPileCards() {
@@ -38,7 +40,7 @@ class Game {
     return this.openCards;
   }
 
-  rendNextCard() {
+  updateOpenCards() {
     this.openCards.unshift(this.openCards.pop());
     let lastCard = this.openCards[this.openCards.length - 1];
     lastCard.draggable = true;

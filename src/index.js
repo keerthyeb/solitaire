@@ -9,34 +9,25 @@ class Solitaire extends React.Component {
     this.cardColor = { black: "black", red: "red" };
     this.BACK = ["\uD83C\uDCA0"];
     this.game = new Game();
-    let piles = this.game.rendPileCards();
-    let card = { type: "", number: "", unicode: "", color: "" };
-    let winningState = { spade: [card], heart: [card], club: [card], diamond: [card] };
-    let openCards = this.game.initializeOpenCards();
-    this.state = { openCards, piles, winningState, fromPile: 0 };
+    this.state = this.game.getGameDetails();
 
+    this.rendCards = this.rendCards.bind(this);
     this.drop = this.drop.bind(this);
     this.dropOnPile = this.dropOnPile.bind(this);
-    this.rendNextCard = this.rendNextCard.bind(this);
+    this.updateOpenCards = this.updateOpenCards.bind(this);
     this.rendOpenCards = this.rendOpenCards.bind(this);
     this.rendWinningDiv = this.rendWinningDiv.bind(this);
     this.dropOnEmptyPile = this.dropOnEmptyPile.bind(this);
   }
 
   allowDrop = ev => ev.preventDefault();
-  drag = ev => {
-    let id = ev.target.id.split("_");
-    let pileNumber = id[3];
-    this.setState({ fromPile: pileNumber });
-    ev.dataTransfer.setData("text", ev.target.id);
-  };
+  drag = ev => ev.dataTransfer.setData("text", ev.target.id);
+  updateOpenCards = () => this.setState({ openCards: this.game.updateOpenCards() });
 
   drop(event) {
     const data = event.dataTransfer.getData("text");
-    let id = data.split("_");
-    let pileNumber = id[3];
-    let game = this.game.isDropable(pileNumber);
-    this.setState(game);
+    let pileNumber = data.split("_")[3];
+    this.setState(this.game.isDropable(pileNumber));
   }
 
   dropOnPile(event) {
@@ -57,11 +48,11 @@ class Solitaire extends React.Component {
     if (sourcePile == "back") {
       let card = this.state.openCards[this.state.openCards.length - 1];
       game = this.game.isDropableOnPileFromOpenCard(card, destinationPile);
-    } else {
-      let unicode = document.getElementById(data).innerHTML;
-      let card = { color: id[0], number: id[1], type: id[2], unicode };
-      game = this.game.isDropableOnPileFromPile(card, sourcePile, destinationPile);
+      return this.setState(game);
     }
+    let unicode = document.getElementById(data).innerHTML;
+    let card = { color: id[0], number: id[1], type: id[2], unicode };
+    game = this.game.isDropableOnPileFromPile(card, sourcePile, destinationPile);
     this.setState(game);
   }
 
@@ -76,8 +67,7 @@ class Solitaire extends React.Component {
   }
 
   createPile(pileLength, pile, elements, cardsDiv) {
-    for (let index = 0; index <= pileLength - 1; index++) {
-      let card = this.state.piles[pile][index];
+    this.state.piles[pile].forEach(card => {
       let id = [card.color, card.number, card.type, pile].join("_");
       let element = <Card id={id} className="black" text={this.BACK} />;
       if (card.draggable)
@@ -92,7 +82,7 @@ class Solitaire extends React.Component {
           />
         );
       elements.push(element);
-    }
+    });
     if (pileLength) {
       cardsDiv.push(<Card id={"pile_" + pile} className="pile" text={elements} />);
       return;
@@ -102,33 +92,9 @@ class Solitaire extends React.Component {
     );
   }
 
-  rendNextCard() {
-    let cards = this.game.rendNextCard();
-    this.setState({ openCards: cards });
-  }
-
-  rendWinningDiv() {
-    let winningState = this.state.winningState;
-    let types = Object.keys(winningState);
-    let winningSections = [];
-    types.forEach(cardType => {
-      let length = winningState[cardType].length;
-      let { unicode, color } = winningState[cardType][length - 1];
-      let winningSection = (
-        <div className="reservedCard" id={cardType} onDrop={this.drop} onDragOver={this.allowDrop.bind(this)}>
-          <div style={{ color }}>{unicode}</div>
-        </div>
-      );
-      winningSections.push(winningSection);
-    });
-    return <div className="reservedSection">{winningSections}</div>;
-  }
-
   rendOpenCards() {
     let openCards = this.state.openCards;
-    if (!openCards.length) {
-      return <div className="back">{element}</div>;
-    }
+    if (!openCards.length) return <div className="back">{element}</div>;
     let card = openCards[openCards.length - 1];
     let id = [card.color, card.number, card.type, "back"].join("_");
     let color = this.cardColor[card.color];
@@ -140,12 +106,31 @@ class Solitaire extends React.Component {
     return <div className="back">{element}</div>;
   }
 
+  rendWinningDiv() {
+    let winningState = this.state.winningState;
+    let winningDeck = [];
+    Object.keys(winningState).forEach(suit => {
+      let length = winningState[suit].length;
+      let { unicode, color } = winningState[suit][length - 1];
+      winningDeck.push(
+        <ReservedDeck
+          class="reservedCard"
+          id={suit}
+          onDrop={this.drop}
+          onDragOver={this.allowDrop.bind(this)}
+          text={<div style={{ color }}>{unicode}</div>}
+        />
+      );
+    });
+    return <div className="reservedSection">{winningDeck}</div>;
+  }
+
   render() {
     return (
       <div className="solitaire">
         <div className="upperContainer">
           <div className="backAndCurrentCard">
-            <Card className="back" id="back" onClick={this.rendNextCard} text={this.BACK} />
+            <Card className="back" id="back" onClick={this.updateOpenCards} text={this.BACK} />
             <this.rendOpenCards />
           </div>
           <this.rendWinningDiv />
@@ -174,6 +159,14 @@ function OpenCard(props) {
       onDrop={props.onDrop}
       onDragOver={props.onDragOver}
     >
+      {props.text}
+    </div>
+  );
+}
+
+function ReservedDeck(props) {
+  return (
+    <div className={props.class} id={props.card} onDrop={props.onDrop} onDragOver={props.onDragOver}>
       {props.text}
     </div>
   );
