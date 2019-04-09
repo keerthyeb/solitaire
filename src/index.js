@@ -13,10 +13,8 @@ class Solitaire extends React.Component {
     let card = { type: "", number: "", unicode: "", color: "" };
     let winningState = { spade: [card], heart: [card], club: [card], diamond: [card] };
     let openCards = this.game.initializeOpenCards();
-    this.state = { openCards: openCards, piles, winningState, fromPile: 0 };
+    this.state = { openCards, piles, winningState, fromPile: 0 };
 
-    this.rendCards = this.rendCards.bind(this);
-    this.createPile = this.createPile.bind(this);
     this.drop = this.drop.bind(this);
     this.dropOnPile = this.dropOnPile.bind(this);
     this.rendNextCard = this.rendNextCard.bind(this);
@@ -42,10 +40,19 @@ class Solitaire extends React.Component {
   }
 
   dropOnPile(event) {
+    let destinationPile = event.target.parentElement.id.split("_")[1];
+    this.updateGame(event, destinationPile);
+  }
+
+  dropOnEmptyPile(event) {
+    let destinationPile = event.target.id.split("_")[1];
+    this.updateGame(event, destinationPile);
+  }
+
+  updateGame(event, destinationPile) {
     const data = event.dataTransfer.getData("text");
     let id = data.split("_");
     let sourcePile = id[3];
-    let destinationPile = event.target.parentElement.id.split("_")[1];
     let game;
     if (sourcePile == "back") {
       let card = this.state.openCards[this.state.openCards.length - 1];
@@ -55,23 +62,6 @@ class Solitaire extends React.Component {
       let card = { color: id[0], number: id[1], type: id[2], unicode };
       game = this.game.isDropableOnPileFromPile(card, sourcePile, destinationPile);
     }
-    this.setState(game);
-  }
-
-  dropOnEmptyPile(event) {
-    const data = event.dataTransfer.getData("text");
-    let id = data.split("_");
-    let sourcePile = id[3];
-    let destinationPile = event.target.id.split("_")[1];
-    let game;
-    if (sourcePile == "back") {
-      let card = this.state.openCards[this.state.openCards.length - 1];
-      game = this.game.isDropableOnPileFromOpenCard(card, destinationPile);
-      return this.setState(game);
-    }
-    let unicode = document.getElementById(data).innerHTML;
-    let card = { color: id[3], number: id[1], type: id[2], unicode };
-    game = this.game.isDropableOnPileFromPile(card, sourcePile, destinationPile);
     this.setState(game);
   }
 

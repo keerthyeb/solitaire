@@ -5,8 +5,8 @@ class Piles {
 
   addPile = pile => this.piles.push(pile);
   getPiles = () => this.piles;
-  getPileAndLength(destinationPile) {
-    let pile = this.piles[destinationPile];
+  getPileAndLength(pileNumber) {
+    let pile = this.piles[pileNumber];
     let length = pile.length;
     return { length, pile };
   }
@@ -25,11 +25,10 @@ class Piles {
   getPileLength = index => this.piles[index].length;
   getLastCard = index => this.piles[index][this.getPileLength(index) - 1];
   isKing = card => +card.number == 13;
-  isEmpty = length => ;
 
   isDropableFromPile(card, sourcePile, destinationPile) {
     let { length, pile } = this.getPileAndLength(destinationPile);
-      if (length == 0 && this.isKing(card)) {
+    if (length == 0 && this.isKing(card)) {
       this.updatePiles(destinationPile, sourcePile, card);
       if (this.piles[sourcePile].length) {
         this.piles[sourcePile][this.piles[sourcePile].length - 1].draggable = true;
@@ -45,26 +44,9 @@ class Piles {
     }
   }
 
-  updatePiles(destinationPile, sourcePile, card) {
-    let sourcePileLength = this.piles[sourcePile].length;
-    let length = 0;
-    for (let i = 0; i < sourcePileLength; i++) {
-      let currentCard = this.piles[sourcePile][i];
-      if (currentCard.unicode == card.unicode) {
-        break;
-      }
-      length++;
-    }
-    let sourcePileArray = this.piles[sourcePile].splice(length);
-    for (let i = 0; i < sourcePileArray.length; i++) {
-      this.piles[destinationPile].push(sourcePileArray[i]);
-    }
-    this.piles[destinationPile].concat(sourcePileArray);
-  }
-
   isDropableFromOpenCard(card, pileNumber) {
     let { length, pile } = this.getPileAndLength(pileNumber);
-      if (length == 0 && this.isKing(card)) {
+    if (length == 0 && this.isKing(card)) {
       card.draggable = true;
       this.piles[pileNumber].push(card);
       return true;
@@ -76,6 +58,21 @@ class Piles {
       return true;
     }
     return false;
+  }
+
+  updatePiles(destinationPile, sourcePile, card) {
+    let sourcePileLength = this.piles[sourcePile].length;
+    let length = 0;
+    for (let i = 0; i < sourcePileLength; i++) {
+      let currentCard = this.piles[sourcePile][i];
+      if (currentCard.unicode == card.unicode) break;
+      length++;
+    }
+    let sourcePileArray = this.piles[sourcePile].splice(length);
+    sourcePileArray.forEach(card => {
+      this.piles[destinationPile].push(card);
+    });
+    this.piles[destinationPile].concat(sourcePileArray);
   }
 }
 
