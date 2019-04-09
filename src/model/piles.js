@@ -58,14 +58,9 @@ class Piles {
   }
 
   updatePiles(destinationPile, sourcePile, card) {
-    let sourcePileLength = this.piles[sourcePile].length;
-    let length = 0;
-    for (let index = 0; index < sourcePileLength; index++) {
-      let currentCard = this.piles[sourcePile][index];
-      if (currentCard.unicode == card.unicode) break;
-      length++;
-    }
-    let sourcePileArray = this.piles[sourcePile].splice(length);
+    card.draggable = true;
+    let index = this.piles[sourcePile].findIndex(pileCard => pileCard.unicode == card.unicode);
+    let sourcePileArray = this.piles[sourcePile].splice(index);
     sourcePileArray.forEach(card => {
       this.piles[destinationPile].push(card);
     });
