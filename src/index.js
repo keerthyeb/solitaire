@@ -131,6 +131,14 @@ class Solitaire extends React.Component {
   }
 
   render() {
+    console.log(this.state.isWon);
+    if (this.state.isWon) {
+      return (
+        <div>
+          <img src="https://cdn2.iconfinder.com/data/icons/kick-off/450/Throphy-512.png" />
+        </div>
+      );
+    }
     return (
       <div className="solitaire">
         <div className="upperContainer">

@@ -13,6 +13,10 @@ class Game {
     this.initializeOpenCards();
   }
 
+  isWon() {
+    return this.winningPiles.isWon();
+  }
+
   rendPileCards() {
     let cardCount = 0;
     for (let pileIndex = 0; pileIndex < 7; pileIndex++) {
@@ -91,7 +95,8 @@ class Game {
     let piles = this.piles.getPiles();
     let openCards = this.openCards;
     let winningState = this.winningPiles.getWinningPiles();
-    return { piles, openCards, winningState };
+    let isWon = this.isWon();
+    return { piles, openCards, winningState, isWon };
   }
 
   getPiles = () => this.piles.getPiles();
